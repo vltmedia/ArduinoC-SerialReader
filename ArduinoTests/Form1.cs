@@ -137,6 +137,7 @@ namespace ArduinoTests
             {
                 Runningis = false;
                 e.Cancel = true;
+                //e.Cancel = true;
             }
             else
             {
