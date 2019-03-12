@@ -141,13 +141,15 @@ namespace ArduinoTests
         {
             if (fullscreen)
             {
-                this.WindowState = FormWindowState.Normal;
+                this.WindowState = FormWindowState.Maximized;
+
+                //this.WindowState = FormWindowState.Normal;
                 //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
                 this.Bounds = Screen.PrimaryScreen.Bounds;
             }
             else
             {
-                this.WindowState = FormWindowState.Maximized;
+                this.WindowState = FormWindowState.Normal;
                 //this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Sizable;
             }
         }
@@ -182,6 +184,7 @@ namespace ArduinoTests
         {
             Appoff();
             this.Opacity = 1;
+            this.Size = new Size (816, 489);
             GoFullscreen(false);
         }
 
@@ -193,6 +196,23 @@ namespace ArduinoTests
         private void button4_Click(object sender, EventArgs e)
         {
             MoveMouse();
+        }
+
+        private void MouseKeysHook_MouseClick(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            
+        }
+
+        private void MouseKeysHook_MouseClick_1(object sender, System.Windows.Forms.MouseEventArgs e)
+        {
+            Console.WriteLine("Clicked");
+            int pX = e.X;
+            int pY = e.Y;
+
+            Graphics g = this.CreateGraphics();
+            SolidBrush brush = new SolidBrush(Color.Black);
+            //CheckMouseClick("LBUTTONDOWN", pX, pY);
+            g.FillRectangle(brush, pX, pY, 10, 10);//Size just for testing purposes
         }
     }
 }

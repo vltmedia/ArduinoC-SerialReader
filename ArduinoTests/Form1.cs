@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using System.Threading;
+using System.Diagnostics;
+using System.Threading;
+using System.IO;
 
 namespace ArduinoTests
 {
@@ -24,6 +27,8 @@ namespace ArduinoTests
             this.backgroundWorker1 = new BackgroundWorker();
             this.backgroundWorker1.WorkerSupportsCancellation = true;
             this.backgroundWorker1.DoWork += new DoWorkEventHandler(backgroundWorker1_DoWork);
+            Convertcsv();
+
             //this.backgroundWorker1.CancelAsync += new DoWorkEventHandler(backgroundWorker1_DoWork);
 
             //this.backgroundWorker1.ProgressChanged += new ProgressChangedEventHandler(bw_ProgressChanged);
@@ -72,7 +77,8 @@ namespace ArduinoTests
                 currectnumMainmenu = t;
             int ff = (int)t;
             textBox1.Invoke(new Action(() => textBox1.Text = MainMenuu[ff]));
-            Thread.Sleep(8);
+            MoveMouse();
+            Thread.Sleep(80);
             //label1.Text = MainMenuu[ff];
             //label1.Refresh();
 
@@ -87,12 +93,12 @@ namespace ArduinoTests
         {
             //string l= lastnum.ToString();
             Point p = Cursor.Position;
-            int ss = p.X + 3;
+            int ss = p.X + TurningNumber;
             Cursor.Position = new Point(ss, p.Y);
             string sss = "B+";
             //int ff = (int)t;
             textBox1.Invoke(new Action(() => textBox1.Text = sss));
-            //Thread.Sleep(8);
+            Thread.Sleep(80);
             //label1.Text = MainMenuu[ff];
             //label1.Refresh();
 
@@ -115,7 +121,8 @@ namespace ArduinoTests
             currectnumMainmenu = t;
             int ff = (int)t;
             textBox1.Invoke(new Action(() => textBox1.Text = MainMenuu[ff]));
-            Thread.Sleep(8);
+            MoveMouse();
+            Thread.Sleep(80);
         }
 
         public void PageDown2()
@@ -123,12 +130,12 @@ namespace ArduinoTests
 
             //string l= lastnum.ToString();
             Point p = Cursor.Position;
-            int ss = p.X - 1;
+            int ss = p.X - TurningNumber;
             Cursor.Position = new Point(ss, p.Y);
             string sss = "B-";
             //int ff = (int)t;
             textBox1.Invoke(new Action(() => textBox1.Text = sss));
-            Thread.Sleep(8);
+            Thread.Sleep(80);
             //label1.Text = MainMenuu[ff];
             //label1.Refresh();
 
@@ -139,6 +146,9 @@ namespace ArduinoTests
             //label1.Text = "PAGE UP: " + l;
 
         }
+
+      
+
         public void SetLastnum(float num)
         {
             Console.WriteLine("This is Lastnum : " + num);
@@ -209,7 +219,7 @@ namespace ArduinoTests
 
                 if (f.Contains("PRESSED A"))
                 {
-                    MoveMouse();
+                    //MoveMouse();
                     textBox1.Invoke(new Action(() => textBox1.Text = f));
 
 
@@ -223,6 +233,47 @@ namespace ArduinoTests
                 if (f.Contains("B -"))
                 {
                     PageDown2();
+
+
+                }
+                if (f.Contains("KILL"))
+                {
+                    KillProcess();
+
+
+                }
+                if (f.Contains("RB"))
+                {
+                    bool b = !IsMultiplied;
+                    IsMultiplied = b;
+                        if(IsMultiplied == true) {
+                        int ma = TurningNumber * Multiplybyy;
+                        TurningNumber = ma;
+                    }
+                    else
+                    {
+                        int ma = TurningNumber / Multiplybyy;
+                        TurningNumber = ma;
+
+
+                    }
+
+
+                }
+                if (f.Contains("RA"))
+                {
+                    bool b = !IsMouseDown;
+                    IsMouseDown = b;
+                    if (IsMouseDown == true)
+                    {
+                        StartMouseDown();
+                    }
+                    else
+                    {
+
+                        KillProcess();
+                        running = Process.Start("MouseUp.ahk");
+                    }
 
 
                 }
@@ -241,7 +292,16 @@ namespace ArduinoTests
 
 
         }
+        public int Multiplybyy = 2;
+        public int TurningNumber = 5;
+        public bool IsMouseDown = false;
+        public bool IsMultiplied = false;
+        public void StartMouseDown()
+        {
 
+
+            running = Process.Start("MouseDown.ahk");
+        }
       
 
         List<string> Loadedpos = new List<string>();
@@ -261,7 +321,7 @@ foreach(string s in Loadedpos)
             }
 
         }
-
+        string moveline = "";
         public void MoveMouse()
         {
             int t = (int)currectnumMainmenu + 1;
@@ -270,12 +330,32 @@ foreach(string s in Loadedpos)
 
             string[] parts = p.Split(',');
             float XX = float.Parse(parts[0]);
-            float YY = float.Parse(parts[0]);
+            float YY = float.Parse(parts[1]);
             int xxx = (int)XX;
             int yyy = (int)YY;
-
+            Console.WriteLine("MoveMouse p : " + p);
+            Console.WriteLine("MoveMouse XX : " + XX);
+            Console.WriteLine("MoveMouse xxx : " + xxx);
             Cursor.Position = new Point(xxx, yyy);
+            //using (StreamReader sr = new StreamReader("MoveMouse.py"))
+            //{
+            //    Console.WriteLine("MoveMouse inside");
 
+            //    // Read the stream to a string, and write the string to the console.
+            //    String line = sr.ReadToEnd();
+            //    string poss = xxx + ", " + yyy;
+            //     //moveline = line.Replace("REPP", poss);
+               
+
+
+
+
+            //}
+            //using (StreamWriter writer = new StreamWriter("Moving.py"))
+            //{
+            //    writer.WriteLine(moveline);
+            //}
+            //Process.Start("Moving.py");
 
         }
         private void input_KeyPress(object sender, KeyPressEventArgs e)
@@ -369,13 +449,25 @@ foreach(string s in Loadedpos)
             MouseKeysHook mh = new MouseKeysHook();
             mh.Show();
         }
-
+        Process running;
         private void button5_Click(object sender, EventArgs e)
         {
-            Convertcsv();
+            running = new Process();
+            running = Process.Start(@"C:\Users\Justin Jaro\Desktop\Sleep.ahk");
             Console.WriteLine(Loadedpos.Count());
 
-            
+
+        }
+        public void KillProcess()
+        {
+
+            running.Kill();
+            running = Process.Start("MouseUp.ahk");
+        }
+        private void button6_Click(object sender, EventArgs e)
+        {
+            running.Kill();
+
         }
     }
 }

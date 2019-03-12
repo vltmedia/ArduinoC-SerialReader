@@ -86,6 +86,7 @@
             this.Name = "MouseKeysHook";
             this.Text = "MouseKeysHook";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MouseKeysHook_FormClosing);
+            this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.MouseKeysHook_MouseClick_1);
             this.ResumeLayout(false);
 
         }
