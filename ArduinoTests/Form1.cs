@@ -168,7 +168,7 @@ namespace ArduinoTests
 
         }
 
-
+        public bool CommandSent = false;
         public void StartServer()
         {
             Console.WriteLine("0");
@@ -210,13 +210,19 @@ namespace ArduinoTests
                 catch
                 {
 
-                    Console.WriteLine("Couldn't parse float");
 
 
                 }
                 Console.WriteLine("f is : " + f);
-                
 
+                if (f.Contains("PBA"))
+                {
+
+                    SendKeycommand("^f");
+
+
+
+                }
                 if (f.Contains("PRESSED A"))
                 {
                     //MoveMouse();
@@ -260,6 +266,13 @@ namespace ArduinoTests
 
 
                 }
+                if (f.Contains("RCP"))
+                {
+                    running = Process.Start("NewNode.ahk");
+
+                    SendKeycommand("!s");
+
+                }
                 if (f.Contains("RA"))
                 {
                     bool b = !IsMouseDown;
@@ -277,6 +290,7 @@ namespace ArduinoTests
 
 
                 }
+                
                 //Console.WriteLine("5aa");
                 //textBox1.Text = f;
                 //Console.WriteLine("5b");
@@ -293,7 +307,7 @@ namespace ArduinoTests
 
         }
         public int Multiplybyy = 2;
-        public int TurningNumber = 5;
+        public int TurningNumber = 10;
         public bool IsMouseDown = false;
         public bool IsMultiplied = false;
         public void StartMouseDown()
@@ -398,6 +412,32 @@ foreach(string s in Loadedpos)
 
 
             }
+
+        }
+
+        public void SendKeycommand(string command)
+        {
+            running = Process.Start("NewNode.ahk");
+            using (StreamReader sr = new StreamReader("SendKey.ahk"))
+            {
+
+                // Read the stream to a string, and write the string to the console.
+                String line = sr.ReadToEnd();
+                moveline = line.Replace("REPP", command);
+
+
+
+
+
+            }
+            using (StreamWriter writer = new StreamWriter("SendKeyN.ahk"))
+            {
+                writer.WriteLine(moveline);
+            }
+            Process.Start("SendKeyN.ahk");
+            //     //moveline = line.Replace("REPP", poss);
+
+
 
         }
 
